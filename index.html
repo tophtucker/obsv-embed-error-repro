@@ -1,2 +1,91 @@
-<meta http-equiv="refresh" content="0; url=https://ameya98.github.io/exploring-graph-nns/public/index.html">
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Observable error reproduction</title>
+<style>
+  body {
+    max-width: 960px;
+    margin: 1em auto;
+  }
+  p {
+    max-width: 640px;
+  }
+</style>
+<body>
 
+<h1>Errors from using different copies of the Runtime</h1>
+
+<p>Here are two notebook embeds. Notebook Embed 1 was downloaded to a local
+folder, and uses that local copy of the runtime. Notebook Embed 2 is hotlinked
+to the module served by the API, and uses the CDN's copy of the runtime.</p>
+
+<p>The first time, it loads fine. The second time (presumably cached), we get
+“spectralDecompositionsAll = RuntimeError: invalid module” in Notebook Embed
+1.</p>
+
+<p>This can be fixed by changing either notebook embed to use the same copy of
+the runtime — either one of the following two lines:</p>
+
+<pre>
+  <code>
+    import {Runtime, Inspector} from "https://cdn.jsdelivr.net/npm/@observablehq/runtime@4/dist/runtime.js";
+    import {Runtime, Inspector} from "./spectral-decompositions-of-natural-images/runtime.js";
+  </code>
+</pre>
+
+<p>The same problem occurs if you're using two different local copies of the
+runtime.</p>
+
+<p>It does seem to depend somewhat on the contents of the cells you're
+embedding; I haven't been able to reconstruct the failure with fresh minimal
+notebooks yet.</p>
+
+<hr/>
+
+<h2>Notebook Embed 1</h2>
+
+<div>
+  <div id="spectralDecompositionsAll"></div>
+
+  <script type="module">
+  import define from "./spectral-decompositions-of-natural-images/index.js";
+  import {Runtime, Inspector} from "./spectral-decompositions-of-natural-images/runtime.js";
+  new Runtime().module(define, name => {
+    if (name === "spectralDecompositionsAll") return new Inspector(document.querySelector("#spectralDecompositionsAll"));
+  });
+  </script>
+</div>
+
+<hr/>
+
+<h2>Notebook Embed 2</h2>
+
+<div>
+  <div id="observablehq-grid_buttons_display-05850d43" style="margin-bottom: 1em;"></div>
+  <div id="observablehq-poly_color_scale-05850d43" style="display: flex; justify-content: center; margin-bottom: 30px;"></div>
+  <div id="observablehq-poly_figcaptions-05850d43" style="position: relative; top: -50px;"></div>
+  <div id="observablehq-poly_conv_main_div-05850d43"></div>
+  <div id="observablehq-polynomial_display-05850d43" style="margin-top: 2em;"></div>
+  <div id="observablehq-poly_conv_sliders-05850d43"></div>
+  <div id="observablehq-viewof-laplacian_type-05850d43" style="text-align: center; margin-top: 2em;"></div>
+  <div id="observablehq-reset_coeffs_button_display-05850d43" style="margin-top: 25px; margin-bottom: 0;"></div>
+  <div id="observablehq-poly_input_slider_watch-05850d43" style="display: none;"></div>
+  <div id="observablehq-highlight_selected_cell-05850d43" style="display: none;"></div>
+
+  <script type="module">
+  import {Runtime, Inspector} from "https://cdn.jsdelivr.net/npm/@observablehq/runtime@4/dist/runtime.js";
+  import define from "https://api.observablehq.com/d/34992a340dbdb759.js?v=3";
+  new Runtime().module(define, name => {
+    if (name === "grid_buttons_display") return new Inspector(document.querySelector("#observablehq-grid_buttons_display-05850d43"));
+    if (name === "poly_color_scale") return new Inspector(document.querySelector("#observablehq-poly_color_scale-05850d43"));
+    if (name === "poly_figcaptions") return new Inspector(document.querySelector("#observablehq-poly_figcaptions-05850d43"));
+    if (name === "poly_conv_main_div") return new Inspector(document.querySelector("#observablehq-poly_conv_main_div-05850d43"));
+    if (name === "viewof laplacian_type") return new Inspector(document.querySelector("#observablehq-viewof-laplacian_type-05850d43"));
+    if (name === "polynomial_display") return new Inspector(document.querySelector("#observablehq-polynomial_display-05850d43"));
+    if (name === "poly_conv_sliders") return new Inspector(document.querySelector("#observablehq-poly_conv_sliders-05850d43"));
+    if (name === "highlight_selected_cell") return new Inspector(document.querySelector("#observablehq-highlight_selected_cell-05850d43"));
+    if (name === "reset_coeffs_button_display") return new Inspector(document.querySelector("#observablehq-reset_coeffs_button_display-05850d43"));
+    if (name === "poly_input_slider_watch") return new Inspector(document.querySelector("#observablehq-poly_input_slider_watch-05850d43"));
+    return ["svg","draw_bottom_line","draw_arrow","draw_original_img","draw_convolutional_kernel","draw_updated_img","draw_static_graph_orig","draw_static_graph_upd","draw_dyn_graph_orig","draw_dyn_graph_upd"].includes(name);
+  });
+  </script>
+</div>
